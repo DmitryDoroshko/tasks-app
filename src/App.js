@@ -1,6 +1,7 @@
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
 import { useState } from 'react';
+import AddTask from "./components/AddTask";
 
 function App() {
   let [tasks, setTasks] = useState(
@@ -24,9 +25,15 @@ function App() {
     }));
   } 
 
+  const addTask = (text, dayAndTime, reminder) => {
+    let newId = Date.now();
+    setTasks([...tasks, {id: newId, reminder: reminder, text: text, day: dayAndTime}]);
+  }
+
   return (
     <div className="container">
         <Header/>
+        <AddTask onAdd={addTask}/>
         <Tasks 
         tasks={tasks} 
         onDeleteTask={deleteTask} 

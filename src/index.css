@@ -15,6 +15,7 @@ body {
     height: 100vh;
     border: 1px solid black;
     border-radius: 10px;
+    overflow-y: scroll;
 }
 
 .header {
@@ -87,4 +88,44 @@ body {
 .task h3 {
     display: flex;
     justify-content: space-between;
+}
+
+.add-task {
+
+}
+
+.add-task label {
+    display: block;
+    text-align: center;
+    margin-right: 15px;
+    width: 100px;
+}
+
+.add-task__form-control {
+    margin: 10px 0;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 30px;
+}
+
+.add-task__form-control label {
+    flex: 1;
+}
+
+.btn-block {
+    display: block;
+    width: 100%;
+    max-width: 400px;
+    margin: 20px auto !important;
+    color: white;
+    background-color: black;
+}
+
+.add-task__form-control input {
+    flex: 2;
+}
+
+.add-task__form-control input[type="checkbox"] {
+    display: flex;
 }
