@@ -1,40 +1,81 @@
+import { useState, useEffect } from 'react';
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
-import { useState } from 'react';
 import AddTask from "./components/AddTask";
 
 function App() {
-  let [tasks, setTasks] = useState(
-    [
-      {id: 1, text: "Doctors Appointment", day: "Feb 5th at 2:30 pm", reminder: true},
-      {id: 2, text: "Work out", day: "Feb 6th at 2:30 pm", reminder: false},
-      {id: 3, text: "Go to school", day: "Feb 7th at 2:30 pm", reminder: true},
-    ] 
-  );
-  
-    let [showTask, setShowTask] = useState(false);
+  let [tasks, setTasks] = useState([]);
+  let [showTask, setShowTask] = useState(false);
 
-  const deleteTask = (id) => {
+  const fetchTasks = async () => {
+    const result = await fetch("http://localhost:5000/tasks");
+    const data = await result.json();
+
+    return data;
+  }
+
+  const fetchTask = async (id) => {
+    const result = await fetch("http://localhost:5000/tasks/" + id);
+    const data = await result.json();
+    return data;
+  }
+
+  const deleteTask = async (id) => {
+    await fetch("http://localhost:5000/tasks/" + id, {
+      method: "DELETE"
+    });
     setTasks(tasks.filter(task => task.id !== id));
   }
 
-  const changeTaskReminder = (id) => {
+  const changeTaskReminder = async (id) => {
+    const taskToToggle = await fetchTask(id);
+    const updatedTask = {...taskToToggle, reminder: !taskToToggle.reminder};
+
+    const res = await fetch("http://localhost:5000/tasks/" + id, {
+      method: "PUT",
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(updatedTask)
+    });
+
+    const data = await res.json();
+
     setTasks(tasks.map(task => {
       if (task.id === id) {
-        task.reminder = !task.reminder;
+        task.reminder = data.reminder;
       }
       return task;
     }));
   } 
 
-  const addTask = (text, dayAndTime, reminder) => {
-    let newId = Date.now();
-    setTasks([...tasks, {id: newId, reminder: reminder, text: text, day: dayAndTime}]);
+  const addTask = async (text, dayAndTime, reminder) => {
+    const task = {reminder: reminder, text: text, day: dayAndTime};
+    const res = await fetch("http://localhost:5000/tasks", {
+      method: "POST",
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(task)
+    });
+
+    const newTask = await res.json();
+
+    setTasks([...tasks, newTask]);
   }
 
   const onShowAddTask = () => {
     setShowTask(!showTask);
   }
+
+  useEffect(function () {
+    const getTasks = async () => {
+      const tasksFromServer = await fetchTasks();
+      setTasks(tasksFromServer);
+    }
+
+    getTasks();
+  }, []);
 
   return (
     <div className="container">
