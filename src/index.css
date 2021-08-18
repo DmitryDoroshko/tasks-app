@@ -46,6 +46,7 @@ body {
 }
 
 .task {
+    cursor: pointer;
     border: 1px solid #fff;
     color: rgb(10, 10, 10);
     background-color: lightgray;

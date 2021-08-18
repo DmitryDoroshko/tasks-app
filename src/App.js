@@ -12,13 +12,26 @@ function App() {
   );
   
   const deleteTask = (id) => {
-    setTasks([...tasks.filter(task => task.id !== id)]);
+    setTasks(tasks.filter(task => task.id !== id));
   }
+
+  const changeTaskReminder = (id) => {
+    setTasks(tasks.map(task => {
+      if (task.id === id) {
+        task.reminder = !task.reminder;
+      }
+      return task;
+    }));
+  } 
 
   return (
     <div className="container">
         <Header/>
-        <Tasks tasks={tasks} onDeleteTask={deleteTask}/>
+        <Tasks 
+        tasks={tasks} 
+        onDeleteTask={deleteTask} 
+        onReminderChange={changeTaskReminder}
+        />
     </div>
   );
 }
