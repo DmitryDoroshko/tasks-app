@@ -2,10 +2,14 @@ import { useState, useEffect } from 'react';
 import Header from "./components/Header";
 import Tasks from "./components/Tasks";
 import AddTask from "./components/AddTask";
+import EditTask from "./components/EditTask";
 
 function App() {
   let [tasks, setTasks] = useState([]);
   let [showTask, setShowTask] = useState(false);
+  let [editATask, setEditATask] = useState(false);
+  let [id, setId] = useState(0);
+
 
   const fetchTasks = async () => {
     const result = await fetch("http://localhost:5000/tasks");
@@ -77,14 +81,45 @@ function App() {
     getTasks();
   }, []);
 
+  const editTask = async (id, newText, newDayAndTime, newReminder) => {
+    setEditATask(!editATask);
+    const task = await fetchTask(id);
+    const newTask = {id: task.id, text: newText, day: newDayAndTime, reminder: newReminder};
+
+    const res = await fetch("http://localhost:5000/tasks/" + id, {
+      method: "PUT",
+      headers: {
+        'Content-type': 'application/json'
+      },
+      body: JSON.stringify(newTask)
+    });
+
+    const data = await res.json();
+
+    setTasks(tasks.map(task => {
+      if (task.id === id) {
+        task = data;
+      }
+      return task;
+    })); 
+  }
+
+  const changeId = (newId) => {
+    setId(newId);
+  }
+
   return (
     <div className="container">
         <Header onShowAddTask={onShowAddTask} showTask={showTask}/>
         {showTask && <AddTask onAdd={addTask}/>}
+        {editATask && <EditTask id={id} onEdit={editTask}/>} 
         <Tasks 
         tasks={tasks} 
         onDeleteTask={deleteTask} 
         onReminderChange={changeTaskReminder}
+        onEditTask={editTask}
+        onIdChange={changeId}
+        currentId={id}
         />
     </div>
   );

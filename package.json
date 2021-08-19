@@ -1,4 +1,5 @@
-{
+{ 
+  "homepage": "http://dmitrydoroshko.github.io/tasks-app/index.html",
   "name": "todo-app",
   "version": "0.1.0",
   "private": true,
